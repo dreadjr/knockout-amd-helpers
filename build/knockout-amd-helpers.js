@@ -2,7 +2,7 @@
 define(["knockout"], function(ko) {
 
 //helper functions to support the binding and template engine (whole lib is wrapped in an IIFE)
-var require = window.requirejs || window.require || window.curl,
+var /*require = window.requirejs || window.require || window.curl,*/
     unwrap = ko.utils.unwrapObservable,
     //call a constructor function with a variable number of arguments
     construct = function(Constructor, args) {
@@ -121,7 +121,15 @@ ko.bindingHandlers.module = {
 
                 //at this point, if we have a module name, then require it dynamically
                 if (moduleName) {
-                    require([addTrailingSlash(ko.bindingHandlers.module.baseDir) + moduleName], function(mod) {
+                  //require.ensure([], function(require) {
+//                  var str = addTrailingSlash(ko.bindingHandlers.module.baseDir) + moduleName;
+                  var str = moduleName;
+                  // MARK: require
+                  // TODO: can i just put this in baseDir??
+                  console.log('resolving', "./ko/" + str)
+                    require(["./ko/" + str], function(mod) {
+                      console.log('resolved', mod);
+//                    require(["./" + moduleName], function(mod) {
                         //if it is a constructor function then create a new instance
                         if (typeof mod === "function") {
                             mod = construct(mod, initialArgs);
@@ -138,6 +146,13 @@ ko.bindingHandlers.module = {
                         extendedContext.$module = mod;
                         templateBinding.data(mod);
                     });
+
+
+
+                    //})
+
+
+
                 }
             },
             disposeWhenNodeIsRemoved: element
@@ -183,13 +198,65 @@ if (ko.virtualElements) {
 
     ko.templateSources.requireTemplate.prototype.text = function(value) {
         //when the template is retrieved, check if we need to load it
+        console.log('text', this.required, this.key);
         if (!this.requested && this.key) {
-            require([engine.defaultRequireTextPluginName + "!" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix], function(templateContent) {
-                this.retrieved = true;
-                this.template(templateContent);
-            }.bind(this));
+          //debugger;
+          let str = engine.defaultRequireTextPluginName + "!" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix;
+          let x = engine.defaultRequireTextPluginName;
+          let path = "./" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix;
+//          let path = "./" + addTrailingSlash(engine.defaultPath) + this.key;
+          console.log('require template', "knockout-template!html!" + path)
+//            let DOUG = require(["text!" + path]);
 
-            this.requested = true;
+          function requireAll(requireContext) {
+            console.log('requireAll', requireContext.keys());
+            return requireContext.keys().map(requireContext);
+          }
+
+
+//          var templates = requireAll(c);
+//          console.log('templates inside', templates);
+//          console.log('templates inside', templates.keys());
+
+//            console.log('templates.resolve', c.resolve("./" + this.key + engine.defaultSuffix));
+//          c.resolve("./" + this.key + engine.defaultSuffix, function(te) {
+//            console.log('laoded this', te);
+//          })
+
+          // WORKINGish
+          let c = require.context("./knockout-amd-helpers", true, /.tmpl.html$/);
+//          let c = require.context('./templates', true, /.tmpl.html$/);
+          var templateContent = c(["./" + this.key + engine.defaultSuffix]);
+
+
+//          let moduleExpression = engine.defaultRequireTextPluginName + "!" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix;
+//          let moduleExpression = "./" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix;
+//          let moduleExpression = "text!" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix;
+//          console.log('module express', moduleExpression);
+//          var templateContent = require([moduleExpression])
+
+
+          this.retrieved = true;
+          this.template(templateContent);
+
+//            c(["./" + this.key + engine.defaultSuffix], function(templateContent) {
+//            //require(["text!" + path], function(templateContent) {
+////            require(["html!" + path], function(templateContent) {
+////            require(["knockout-template!html!" + path], function(templateContent) {
+////            require(["html!" + path], function(templateContent) {
+////            require([engine.defaultRequireTextPluginName + "!" + addTrailingSlash(engine.defaultPath) + this.key + engine.defaultSuffix], function(templateContent) {
+//              console.log('template', templateContent);
+//                this.retrieved = true;
+//                this.template(templateContent);
+//            }.bind(this));
+
+//          c(["./" + this.key + engine.defaultSuffix], function(templateContent) {
+//            console.log('template', templateContent);
+//            this.retrieved = true;
+//            this.template(templateContent);
+//          }.bind(this));
+
+          this.requested = true;
         }
 
         //if template is currently empty, then clear it

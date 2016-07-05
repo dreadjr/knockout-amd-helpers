@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <link rel="stylesheet" href="foundation/css/normalize.css" />
+    <link rel="stylesheet" href="foundation/css/foundation.css" />
+
+    <title></title>
+</head>
+<body>
+    <!-- ko module: 'navigation' -->
+    <!-- /ko -->
+
+<!--    <span>[name].tmpl.html</span>-->
+<!--    <div class="row" data-bind="template: 'content.tmpl-html'"></div>-->
+<!--    <footer class="row" data-bind="template: 'footer.tmpl-html'"></footer>-->
+
+    <div class="row" data-bind="template: 'content'"></div>
+    <footer class="row" data-bind="template: 'footer'"></footer>
+
+<!-- FOR SOME REASON VENDOR is trying to get chunk by in parent directory
+    <script src="dist/vendor.bundle.js"></script>
+    <script src="dist/webpack.optimized.js"></script>
+-->
+
+    <script src="dist/vendor.bundle.js"></script>
+    <script src="dist/webpack.optimized.js"></script>
+
+</body>
+</html>
+
+
+
+
