@@ -118,9 +118,8 @@ module.exports = {
 //      minChunks: 2
 //    }),
 
-    new webpack.ContextReplacementPlugin(/^\.\/ko/, path.resolve("modules")),
-    new webpack.ContextReplacementPlugin(/^\.\/knockout-amd-helpers/, path.resolve("templates")),
-//    new webpack.ContextReplacementPlugin(/text!\.\/templates$/, path.resolve("templates"))
+    new webpack.ContextReplacementPlugin(/^\.\/knockout-modules/, path.resolve("modules")),
+    new webpack.ContextReplacementPlugin(/^\.\/knockout-templates/, path.resolve("templates")),
   ],
 
   devServer: {

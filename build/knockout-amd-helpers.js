@@ -1,8 +1,8 @@
-// knockout-amd-helpers 0.7.4 | (c) 2015 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
+// knockout-amd-helpers 0.7.4 | (c) 2016 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
 define(["knockout"], function(ko) {
 
 //helper functions to support the binding and template engine (whole lib is wrapped in an IIFE)
-var /*require = window.requirejs || window.require || window.curl,*/
+var require = window.requirejs || window.require || window.curl,
     unwrap = ko.utils.unwrapObservable,
     //call a constructor function with a variable number of arguments
     construct = function(Constructor, args) {
@@ -33,6 +33,10 @@ var /*require = window.requirejs || window.require || window.curl,*/
 
         return false;
     };
+
+function defaultModuleLoader(moduleName, done) {
+  require([addTrailingSlash(ko.bindingHandlers.module.baseDir) + moduleName], done);
+}
 
 //an AMD helper binding that allows declarative module loading/binding
 ko.bindingHandlers.module = {
@@ -99,6 +103,7 @@ ko.bindingHandlers.module = {
             read: function() {
                 //module name could be in an observable
                 var initialArgs,
+          moduleLoader = ko.bindingHandlers.module.loader || defaultModuleLoader,
                     moduleName = unwrap(valueAccessor());
 
                 //observable could return an object that contains a name property
@@ -121,10 +126,7 @@ ko.bindingHandlers.module = {
 
                 //at this point, if we have a module name, then require it dynamically
                 if (moduleName) {
-                  var str = moduleName;
-                    // MARK: require
-                    require(["./ko/" + str], function(mod) {
-//                    require(["./" + moduleName], function(mod) {
+                    moduleLoader(moduleName, function(mod) {
                         //if it is a constructor function then create a new instance
                         if (typeof mod === "function") {
                             mod = construct(mod, initialArgs);
@@ -141,13 +143,6 @@ ko.bindingHandlers.module = {
                         extendedContext.$module = mod;
                         templateBinding.data(mod);
                     });
-
-
-
-                    //})
-
-
-
                 }
             },
             disposeWhenNodeIsRemoved: element
@@ -183,6 +178,10 @@ if (ko.virtualElements) {
     engine.defaultSuffix = ".tmpl.html";
     engine.defaultRequireTextPluginName = "text";
 
+  engine.loader = function(templateName, done) {
+        require([engine.defaultRequireTextPluginName + "!" + addTrailingSlash(engine.defaultPath) + templateName + engine.defaultSuffix], done);
+  };
+
     //create a template source that loads its template using the require.js text plugin
     ko.templateSources.requireTemplate = function(key) {
         this.key = key;
@@ -194,13 +193,12 @@ if (ko.virtualElements) {
     ko.templateSources.requireTemplate.prototype.text = function(value) {
         //when the template is retrieved, check if we need to load it
         if (!this.requested && this.key) {
-          // MARK: require
-          let c = require.context("./knockout-amd-helpers", true, /.tmpl.html$/);
-          var templateContent = c(["./" + this.key + engine.defaultSuffix]);
+            engine.loader(this.key, function(templateContent) {
+                this.retrieved = true;
+                this.template(templateContent);
+            }.bind(this));
 
-          this.requested = true;
-          this.retrieved = true;
-          this.template(templateContent);
+            this.requested = true;
         }
 
         //if template is currently empty, then clear it
