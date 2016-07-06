@@ -10,24 +10,12 @@
     <title></title>
 </head>
 <body>
-    <!-- ko module: 'navigation' -->
-    <!-- /ko -->
-
-<!--    <span>[name].tmpl.html</span>-->
-<!--    <div class="row" data-bind="template: 'content.tmpl-html'"></div>-->
-<!--    <footer class="row" data-bind="template: 'footer.tmpl-html'"></footer>-->
-
+    <div class="row" data-bind="module: 'navigation'"></div>
     <div class="row" data-bind="template: 'content'"></div>
     <footer class="row" data-bind="template: 'footer'"></footer>
 
-<!-- FOR SOME REASON VENDOR is trying to get chunk by in parent directory
     <script src="dist/vendor.bundle.js"></script>
     <script src="dist/webpack.optimized.js"></script>
--->
-
-    <script src="dist/vendor.bundle.js"></script>
-    <script src="dist/webpack.optimized.js"></script>
-
 </body>
 </html>
 
