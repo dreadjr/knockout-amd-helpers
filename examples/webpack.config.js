@@ -1,5 +1,7 @@
 "use strict"
 
+// webpack --display-modules -c -v --config=webpack.config.js --display-error-details
+
 let path = require('path');
 let webpack = require('webpack');
 //let ExtractTextPlugin = require("extract-text-webpack-plugin");
