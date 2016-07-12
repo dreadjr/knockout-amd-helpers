@@ -31,8 +31,7 @@ module.exports = {
       "knockout-amd-helpers": path.resolve(__dirname, "./../build/knockout-amd-helpers")
     },
     modulesDirectories: [
-      "node_modules",
-      "modules"
+      "node_modules"
     ]
   },
 
@@ -101,6 +100,8 @@ module.exports = {
 //    ]
   },
   plugins: [
+    // TODO: externalize knockout, pull from cdn
+
 //    new webpack.ProvidePlugin({
 //      ko: "knockout",
 //    }),

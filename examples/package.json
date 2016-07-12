@@ -1,6 +1,11 @@
 {
   "name": "",
   "version": "",
+  "scripts": {
+    "stats": "webpack --profile --json > stats.json",
+    "webpack:prod": "webpack --progress",
+    "webpack:dev": "webpack-dev-server --progress"
+  },
   "devDependencies": {
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
@@ -13,5 +18,8 @@
     "text-loader": "0.0.1",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "bundle-loader": "^0.5.4"
   }
 }
